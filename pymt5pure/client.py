@@ -86,22 +86,17 @@ class MT5Client(KeepaliveMixin):
                 ),
             )
         )
-        response = self.recv(is_auth=True)
+        startres = self.recv(is_auth=True)
 
-        if response.cmd != CMD_AUTH_START:
+        if startres.cmd != CMD_AUTH_START:
             raise InvalidPacket(
                 "Response command mismatch. "
-                f"expected: {CMD_AUTH_START} result: {response.cmd}"
+                f"expected: {CMD_AUTH_START} result: {startres.cmd}"
             )
-
-        srv_rand = response.params["SRV_RAND"]
-
-        # initiate crypter
-        if self.is_crypt:
-            self.crypter = MT5AES(password=password, crypt_rand=srv_rand)
 
         # request auth answer
         cli_rand = uuid1().hex
+        srv_rand = startres.params["SRV_RAND"]
         srv_rand_answer = hash_from_password(password, srv_rand)
         self.send(
             Request(
@@ -109,21 +104,28 @@ class MT5Client(KeepaliveMixin):
                 dict(SRV_RAND_ANSWER=srv_rand_answer, CLI_RAND=cli_rand),
             )
         )
+        answer_res = self.recv(is_auth=True)
 
         # validate auth answer
-        response = self.recv(is_auth=True)
         hash_password = hash_from_password(password, cli_rand)
-        cli_rand_answer = response.params["CLI_RAND_ANSWER"]
+        cli_rand_answer = answer_res.params["CLI_RAND_ANSWER"]
         if hash_password != cli_rand_answer:
             raise InvalidPacket(
                 "Server sent incorrect password hash "
                 f"expected: {hash_password} result: {cli_rand_answer}"
             )
 
+        # initiate crypter
+        if self.is_crypt:
+            self.crypter = MT5AES(
+                password=password,
+                crypt_rand=answer_res.params["CRYPT_RAND"],
+            )
+
         # set client attributes
         self.is_authorized = True
-        self.version_access = response.params.get("VERSION_ACCESS")
-        self.version_trade = response.params.get("VERSION_TRADE")
+        self.version_access = answer_res.params.get("VERSION_ACCESS")
+        self.version_trade = answer_res.params.get("VERSION_TRADE")
 
         self.start_keepalive()
 

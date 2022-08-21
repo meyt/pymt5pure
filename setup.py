@@ -12,7 +12,7 @@ def read_version(module_name):
 setup(
     name="pymt5pure",
     version=read_version("pymt5pure"),
-    description="MetaTrader 5 WebAPI implemented in pure Python (cross-platform)",
+    description="MetaTrader 5 WebAPI implementation in Python",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     url="http://github.com/meyt/pymt5pure",
@@ -32,5 +32,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Topic :: Software Development :: Libraries",
     ],
-    install_requires=[],
+    install_requires=[
+        "pycryptodome-3.15.0",
+    ],
 )
