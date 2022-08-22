@@ -48,5 +48,6 @@ def hash_password_vrand(password: str, vrand: str):
 
 
 def dump_socket_data(v: bytes, name="response-dump.txt"):  # pragma: nocover
+    """Dump socket response data for test and debugging"""
     with open(join(package_dir, name), "wb+") as f:
         f.write(v)
