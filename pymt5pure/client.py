@@ -15,7 +15,7 @@ from pymt5pure.constants import (
     MAX_CLIENT_COMMAND,
 )
 from pymt5pure.exceptions import InvalidPacket
-from pymt5pure.helpers import hash_from_password
+from pymt5pure.helpers import hash_password_rand
 from pymt5pure.crypter import MT5AES
 
 
@@ -97,7 +97,7 @@ class MT5Client(KeepaliveMixin):
         # request auth answer
         cli_rand = uuid1().hex
         srv_rand = startres.params["SRV_RAND"]
-        srv_rand_answer = hash_from_password(password, srv_rand)
+        srv_rand_answer = hash_password_rand(password, srv_rand)
         self.send(
             Request(
                 CMD_AUTH_ANSWER,
@@ -107,7 +107,7 @@ class MT5Client(KeepaliveMixin):
         answer_res = self.recv(is_auth=True)
 
         # validate auth answer
-        hash_password = hash_from_password(password, cli_rand)
+        hash_password = hash_password_rand(password, cli_rand)
         cli_rand_answer = answer_res.params["CLI_RAND_ANSWER"]
         if hash_password != cli_rand_answer:
             raise InvalidPacket(

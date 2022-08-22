@@ -1,6 +1,6 @@
 # pymt5pure
 
-MetaTrader 5 WebAPI implemented in pure Python (cross-platform).
+MetaTrader 5 WebAPI implementation in Python (cross-platform).
 
 ## Installation
 
@@ -13,5 +13,5 @@ pip install pymt5pure
 * [x] Basic socket connection
 * [x] Authentication
 * [x] Connection KeepAlive
-* [] AES Encryption
+* [x] AES Encryption
 * [] Commands interface

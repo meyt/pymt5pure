@@ -32,7 +32,5 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Topic :: Software Development :: Libraries",
     ],
-    install_requires=[
-        "pycryptodome-3.15.0",
-    ],
+    install_requires=["pycryptodome >= 3.15.0"],
 )
