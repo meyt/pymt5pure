@@ -31,7 +31,6 @@ class KeepaliveMixin:
 
     def _keepalive_worker(self):
         while self.is_connected:
-            print("pinging")
             self.socket.send(Ping().dump())
             sleep(self.__class__.ping_interval)
 
