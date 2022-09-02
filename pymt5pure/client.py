@@ -1,5 +1,5 @@
 import socket
-from time import sleep
+from time import sleep, time
 from uuid import uuid1
 from threading import Thread
 
@@ -15,7 +15,7 @@ from pymt5pure.constants import (
     MAX_CLIENT_COMMAND,
 )
 from pymt5pure.exceptions import InvalidPacket
-from pymt5pure.helpers import hash_password_rand
+from pymt5pure.helpers import hash_password_rand, dump_socket_data
 from pymt5pure.crypter import MT5AES
 
 
@@ -44,6 +44,7 @@ class MT5Client(KeepaliveMixin):
         version: str = "3211",
         timeout: float = 180,
         is_crypt: bool = False,
+        is_debug: bool = False,
     ) -> None:
         self.host = host
         self.port = port
@@ -55,6 +56,7 @@ class MT5Client(KeepaliveMixin):
         self.socket = None
         self.is_authorized = False
         self.is_connected = False
+        self.is_debug = is_debug
 
         # fills after authentication
         self.version_access = None
@@ -146,7 +148,12 @@ class MT5Client(KeepaliveMixin):
             1 if self.packet_num >= MAX_CLIENT_COMMAND else self.packet_num + 1
         )
         request.num = self.packet_num
-        return self.socket.sendall(request.dump())
+        data = request.dump()
+
+        if self.is_debug:
+            dump_socket_data(data, "mt5logs/%s-send.txt" % time())
+
+        return self.socket.sendall(data)
 
     def recv(self, is_auth: bool = False) -> Response:
         result = b""
@@ -195,6 +202,9 @@ class MT5Client(KeepaliveMixin):
             # read to end
             if packet_flag == 0:
                 break
+
+        if self.is_debug:
+            dump_socket_data(result, "mt5logs/%s-recv.txt" % time())
 
         return Response(result)
 

@@ -1,4 +1,4 @@
-from os.path import dirname, join
+from os.path import dirname
 from hashlib import md5
 
 module_dir = dirname(__file__)
@@ -47,7 +47,7 @@ def hash_password_vrand(password: str, vrand: str):
         yield r
 
 
-def dump_socket_data(v: bytes, name="response-dump.txt"):  # pragma: nocover
+def dump_socket_data(v: bytes, filename: str):  # pragma: nocover
     """Dump socket response data for test and debugging"""
-    with open(join(package_dir, name), "wb+") as f:
+    with open(filename, "wb+") as f:
         f.write(v)
