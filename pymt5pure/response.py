@@ -3,8 +3,7 @@ try:
 except Exception:
     import json as jsonlib
 
-
-from pymt5pure.constants import ret_code_map
+from pymt5pure.constants import MT_RET_OK
 from pymt5pure.exceptions import ResponseError
 
 
@@ -25,7 +24,7 @@ class Response:
                 if k == "RETCODE":
                     self.status_code, self.status_text = v.split(" ")
                     self.status_code = int(self.status_code)
-                    if self.status_code != ret_code_map["MT_RET_OK"]:
+                    if self.status_code != MT_RET_OK:
                         raise ResponseError(v)
 
         self.cmd = fields[0]
