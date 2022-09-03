@@ -43,7 +43,7 @@ class MT5Client(KeepaliveMixin):
         agent: str = "WebApiExtensionExample",
         version: str = "3211",
         timeout: float = 180,
-        is_crypt: bool = False,
+        is_crypt: bool = True,
         is_debug: bool = False,
     ) -> None:
         self.host = host
